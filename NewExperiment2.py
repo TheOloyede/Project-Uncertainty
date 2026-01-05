@@ -4,20 +4,14 @@
 # In[1]:
 
 
-# =========================
 # Experiment 2 — Imports
-# (I keep all imports here to avoid scattering)
-# =========================
-
 import os
 import random
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
 import torch
 import torch.nn as nn
-
 from torchvision.datasets import MNIST
 import torchvision.transforms as transforms
 from torchvision.models import resnet18, ResNet18_Weights
@@ -26,10 +20,7 @@ from torchvision.models import resnet18, ResNet18_Weights
 # In[2]:
 
 
-# =========================
 # Device and Reproducibility
-# =========================
-
 Device = "cuda" if torch.cuda.is_available() else "cpu"
 print("Device:", Device)
 
@@ -45,17 +36,11 @@ def SeedEverything(SeedValue: int = 42) -> None:
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-# Uncomment during debugging if needed:
-# SeedEverything(42)
-
 
 # In[3]:
 
 
-# =========================
 # Model Construction / Loading
-# =========================
-
 def BuildResNet18(UsePretrainedInit: bool) -> torch.nn.Module:
     """
     I build ResNet18 and replace the final layer for MNIST (10 classes).
@@ -79,10 +64,7 @@ def LoadModelFromCheckpoint(CheckpointPath: str, UsePretrainedInit: bool) -> tor
 # In[4]:
 
 
-# =========================
 # Dataset + Normalization
-# =========================
-
 DataDir = "./data"
 
 # ResNet18 pretrained weights expect ImageNet normalization
@@ -112,10 +94,7 @@ print("MNIST Test Size:", len(TestDatasetNoNorm))
 # In[5]:
 
 
-# =========================
-# Load Best Model (from Experiment 1 training)
-# =========================
-
+# Load Best Model 
 BestModelPath = "./outputs/models/Pretrained_best.pt"
 BestModelIsPretrainedInit = True
 
@@ -126,10 +105,7 @@ print("Loaded model:", BestModelPath)
 # In[6]:
 
 
-# =========================
-# Helpers: Prediction + Entropy + Visualization
-# =========================
-
+#Prediction + Entropy + Visualization
 def PredictProbaOneModel(Model: torch.nn.Module, BatchImage01: torch.Tensor) -> torch.Tensor:
     """
     BatchImage01: [B,3,H,W] in [0,1]
@@ -183,10 +159,7 @@ def PlotGrid(Images01: torch.Tensor, YTrue: torch.Tensor, YPred: torch.Tensor, T
 # In[7]:
 
 
-# =========================
-# Clean Evaluation (20 random images)
-# =========================
-
+# Evaluation (20 random images)
 IndexList = torch.randperm(len(TestDatasetNoNorm))[:20].tolist()
 Samples = [TestDatasetNoNorm[i] for i in IndexList]
 
@@ -208,10 +181,7 @@ PlotGrid(XClean, YTrue, PredClean, Title="Exp2: 20 Random Clean MNIST Test Image
 # In[11]:
 
 
-# =========================
 # Noise Robustness + Uncertainty (Accuracy + Entropy)
-# =========================
-
 SaveDirExp2 = "Exp2Results"
 os.makedirs(SaveDirExp2, exist_ok=True)
 
@@ -247,10 +217,7 @@ for Lvl in NoiseLevels:
 # In[10]:
 
 
-# =========================
 # Save Metrics + Plot Curves
-# =========================
-
 DfExp2 = pd.DataFrame({
     "NoiseLevel": NoiseLevels,
     "Accuracy": AccByNoise,
@@ -282,12 +249,10 @@ DfExp2
 # In[12]:
 
 
-# =========================
-# Exp2 — Separate Plots
 # (1) Accuracy vs Noise
 # (2) Entropy vs Noise
 # (3) Accuracy vs Entropy
-# =========================
+
 
 # 1) Accuracy vs Noise
 plt.figure(figsize=(7, 5))
